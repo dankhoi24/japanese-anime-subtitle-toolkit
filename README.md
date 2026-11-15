@@ -1,13 +1,17 @@
 # Japanese Anime Subtitles
 
-Repo để **lưu phụ đề tiếng Nhật** dùng với [asbplayer](https://docs.asbplayer.dev/).
+Nơi lưu phụ đề tiếng Nhật để học anime bằng [asbplayer](https://docs.asbplayer.dev/).
 
-## Thư mục
+## Chi's Sweet Home (2008)
 
-- `subtitles/chis-sweet-home/`: phụ đề từng tập *Chi's Sweet Home*.
+- [Tập 001–010](subtitles/chis-sweet-home): 10 file phụ đề Nhật dạng SRT, mỗi tập một file.
+- Tên file: `001.ja.srt` ... `010.ja.srt`.
+- Nguồn chuyển đổi: nhóm **Kamigami**, file `[Kamigami][Chi’s Sweet Home][01-16][JPN].ass`, được lưu tại [Kitsunekko mirror](https://github.com/Ajatt-Tools/kitsunekko-mirror/tree/main/subtitles/anime_tv).
+- Chỉ giữ các dòng phụ đề tiếng Nhật; mốc thời gian đã đặt lại cho từng tập.
+- **Chưa kiểm tra đồng bộ với video AnimeVietSub**. Có thể cần chỉnh subtitle offset trong asbplayer.
 
-Đặt tên: `001.ja.srt`, `002.ja.srt`, ... `104.ja.srt`.
+> Repo hiện là **Public**. Nếu dùng để lưu cá nhân, nên chuyển sang **Private** trong GitHub Settings → General → Danger Zone. Hãy xác minh quyền tái phân phối trước khi chia sẻ hoặc tải lên Jimaku.
 
-Hiện chưa có file phụ đề nào được upload vào repo.
+## Cách dùng
 
-> Repo này hiện là **Public**. Trước khi upload phụ đề bên thứ ba, hãy kiểm tra quyền chia sẻ lại. Nếu chỉ để lưu cá nhân, nên chuyển repo sang **Private** trong GitHub Settings.
+Mở video tương ứng, vào asbplayer → Load Subtitles → chọn file `.ja.srt`. Nếu phụ đề xuất hiện lệch lời thoại, chỉnh subtitle offset.
