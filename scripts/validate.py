@@ -22,7 +22,7 @@ def main() -> int:
             print(f"FAILED {path.name}: {'; '.join(issues)}")
         else:
             print(f"OK {path.name}")
-    return 1 if not errors else 1 if errors else 0
+    return 1 if errors else 0
 
 if __name__ == "__main__":
     raise SystemExit(main())
