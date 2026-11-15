@@ -1,0 +1,47 @@
+{
+  "id": "chis-sweet-home",
+  "title": "Chi's Sweet Home (2008)",
+  "total_episodes": 104,
+  "source_repository": "Ajatt-Tools/kitsunekko-mirror",
+  "source_path_template": "subtitles/anime_tv/Chi’s Sweet Home/[Kamigami][Chi’s Sweet Home][{first:02d}-{last:02d}][JPN].ass",
+  "opening_anchor": "ご機嫌で～す",
+  "japanese_styles": [
+    "日文对话",
+    "日文字体缩小",
+    "日文两人同时说话置顶"
+  ],
+  "groups": [
+    {
+      "first": 1,
+      "last": 16
+    },
+    {
+      "first": 17,
+      "last": 32
+    },
+    {
+      "first": 33,
+      "last": 44
+    },
+    {
+      "first": 45,
+      "last": 56
+    },
+    {
+      "first": 57,
+      "last": 68
+    },
+    {
+      "first": 69,
+      "last": 80
+    },
+    {
+      "first": 81,
+      "last": 92
+    },
+    {
+      "first": 93,
+      "last": 104
+    }
+  ]
+}
