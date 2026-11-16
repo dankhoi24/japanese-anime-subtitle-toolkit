@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#121b23">
+  <title>Anime Sentence Finder · Học tiếng Nhật</title>
+  <meta name="description" content="Tìm câu tiếng Nhật trong phụ đề anime theo từ khóa, tập và thời gian.">
+  <style>
+    :root { color-scheme:dark; --bg:#10171d; --panel:#1b252d; --panel2:#23303a; --border:#34424e; --text:#f1f5f7; --muted:#a9bdc6; --accent:#88d6c0; --accent2:#142e2d; }
+    * { box-sizing:border-box } body { margin:0; color:var(--text); background:radial-gradient(ellipse at 90% -5%,#1c3a42 0,transparent 42%),var(--bg); font:16px/1.5 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
+    .wrap {max-width:940px; margin:auto; padding:42px 20px 90px}
+    .eyebrow {text-transform:uppercase;letter-spacing:.13em;color:var(--accent);font-size:.73rem;font-weight:750}
+    h1 {font-size:clamp(1.75rem,4vw,2.7rem);line-height:1.15;letter-spacing:-.035em;margin:10px 0}
+    h2 {font-size:1.05rem;margin:0} .intro {color:var(--muted);max-width:690px;margin:0 0 26px}
+    .search-box,.result,.help,.empty,.stats {border:1px solid var(--border);background:var(--panel);border-radius:16px}
+    .search-box {padding:18px;margin:18px 0 20px}
+    label {display:block;font-size:.86rem;color:var(--muted);margin-bottom:7px}
+    .search-row {display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+    input,select {min-width:0;font:inherit;color:var(--text);background:#111d24;border:1px solid #50616e;border-radius:10px;padding:12px 13px;outline-offset:3px}
+    input[type=search] {flex:1 1 300px;font-size:1.2rem} select{flex:0 0 142px}
+    input:focus,select:focus {outline:2px solid var(--accent)}
+    .hints {font-size:.84rem;margin-top:12px;color:var(--muted)}
+    .hints button {color:var(--accent);background:none;border:0;text-decoration:underline;cursor:pointer;font:inherit;padding:0 3px}
+    .stats {padding:12px 16px;color:var(--muted);margin:0 0 16px;font-size:.92rem}
+    .results {display:grid;gap:12px;margin-top:12px}
+    .result {padding:18px;transition:border-color .12s ease} .result:hover{border-color:#5c857e}
+    .result-top {display:flex;align-items:center;gap:9px;flex-wrap:wrap;color:var(--muted);font-size:.83rem}
+    .ep {color:var(--accent);font-weight:700}
+    .time {font-variant-numeric:tabular-nums;background:var(--panel2);border-radius:6px;padding:3px 8px}
+    .jp {font-size:clamp(1.1rem,2vw,1.4rem);white-space:pre-wrap;line-height:1.65;margin:12px 0 14px;word-wrap:break-word}
+    mark{background:#775c22;color:#fff3cb;border-radius:3px;padding:0 1px}
+    .actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+    button{font:inherit;cursor:pointer;border-radius:9px;padding:8px 12px;border:1px solid #51646a;background:var(--panel2);color:var(--text)}
+    button:hover{filter:brightness(1.12)} .primary {background:var(--accent);color:#092321;border-color:var(--accent);font-weight:700}
+    .small{font-size:.83rem;padding:7px 10px}
+    .note{color:var(--muted);font-size:.78rem;margin-top:10px}
+    .help {padding:17px 19px;margin-top:28px;color:var(--muted);font-size:.9rem}
+    .help summary{color:var(--text);cursor:pointer;font-weight:650}
+    .help ol{padding-left:22px} .help p:last-child{margin-bottom:0}
+    .empty {padding:24px;color:var(--muted)} .footer{font-size:.8rem;color:var(--muted);margin-top:26px}
+    .toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:#d0f6e8;color:#10372b;padding:10px 18px;border-radius:30px;box-shadow:0 6px 25px #0006;max-width:90%;z-index:10}
+    .hidden{display:none!important}
+    .link-editor {margin-top:12px;background:var(--panel2);border-radius:10px;padding:12px}
+    .link-editor input{width:100%;font-size:.9rem}
+    .link-editor .actions{margin-top:9px}
+    a {color:var(--accent)} :focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <div class="eyebrow">日本語 · Subtitle search</div>
+    <h1>Anime Sentence Finder</h1>
+    <p class="intro">Tìm từ hoặc cụm tiếng Nhật trong các tập <strong>Chi's Sweet Home</strong>. Xem câu gốc, số tập và mốc thời gian; mở video để nghe lại.</p>
+
+    <section class="search-box" aria-label="Bộ lọc tìm kiếm">
+      <label for="query">Từ hoặc cụm từ tiếng Nhật</label>
+      <div class="search-row">
+        <input id="query" type="search" placeholder="Ví dụ: おなか, どっち, ママ..." autocomplete="off" spellcheck="false">
+        <select id="episode" aria-label="Lọc theo tập"><option value="">Tất cả tập</option></select>
+      </div>
+      <div class="hints">Thử nhanh: <button data-q="どっち">どっち</button> <button data-q="おなか">おなか</button> <button data-q="ママ">ママ</button> <button data-q="わかんない">わかんない</button></div>
+    </section>
+
+    <div id="stats" class="stats" role="status">Đang tải phụ đề…</div>
+    <div id="results" class="results" aria-live="polite"></div>
+    <div id="more" style="margin-top:18px;text-align:center"></div>
+
+    <details class="help">
+      <summary>Cách mở đúng tập và nghe lại câu</summary>
+      <ol>
+        <li>Nhập từ tiếng Nhật, chọn một kết quả có số tập và timestamp.</li>
+        <li>Bấm <strong>Mở video</strong>. Trang sẽ thử sao chép thời gian và mở video ở tab mới.</li>
+        <li>Nếu video không tự tua đến thời gian đó, hãy tua thủ công hoặc dùng asbplayer để chuyển đến câu tương ứng.</li>
+        <li>Với tập chưa có URL trực tiếp, bấm <strong>Gắn link tập</strong> và dán URL khi bạn mở tập đó lần đầu. Trình duyệt sẽ ghi nhớ liên kết trên thiết bị này.</li>
+      </ol>
+      <p>Tra cứu theo chữ khớp trong phụ đề (không tự gộp các dạng chia động từ). Timestamp lấy từ file SRT, có thể lệch nếu bản video khác bản phụ đề.</p>
+    </details>
+
+    <p class="footer">Dữ liệu: phụ đề tiếng Nhật Kamigami, tập 001–010 trong <a href="https://github.com/dankhoi24/japanese-anime-subtitle-toolkit/tree/main/subtitles/chis-sweet-home" target="_blank" rel="noopener noreferrer">repository GitHub</a>. Không lưu trữ video hay âm thanh. Đây là công cụ tra cứu cá nhân; hãy kiểm tra quyền chia sẻ phụ đề.</p>
+  </main>
+  <div class="toast hidden" id="toast" role="status"></div>
+
+<script>
+(() => {
+  "use strict";
+  const SERIES_URL = "https://animevietsub.best/phim/mai-am-cua-meo-chi-a653/";
+  const DEFAULT_LINKS = { "001": "https://animevietsub.best/phim/mai-am-cua-meo-chi-a653/tap-01-31478.html" };
+  const STORAGE_KEY = "anime-sentence-links-v1";
+  const $ = id => document.getElementById(id);
+  let cues = [], query = "", selectedEpisode = "", visible = 40;
+  let customLinks = {};
+  try { customLinks = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}") || {}; } catch { customLinks = {}; }
+
+  const pad = ep => String(ep).padStart(3, "0");
+  const formatTime = seconds => {
+    const whole = Math.floor(seconds);
+    return String(Math.floor(whole / 60)).padStart(2, "0") + ":" + String(whole % 60).padStart(2, "0");
+  };
+  const normalize = value => (value || "").normalize("NFKC").trim().toLocaleLowerCase();
+  const el = (tag, cls, text) => {
+    const n = document.createElement(tag);
+    if (cls) n.className = cls;
+    if (text !== undefined) n.textContent = text;
+    return n;
+  };
+  function toast(message) {
+    const n = $("toast");
+    n.textContent = message;
+    n.classList.remove("hidden");
+    clearTimeout(toast.timer);
+    toast.timer = setTimeout(() => n.classList.add("hidden"), 3000);
+  }
+  function highlight(parent, source, search) {
+    if (!search) { parent.textContent = source; return; }
+    const folded = normalize(source);
+    const at = folded.indexOf(search);
+    // For normalized strings whose length changes, use plain text to avoid misleading highlight offsets.
+    if (at < 0 || folded.length !== source.length) { parent.textContent = source; return; }
+    let cursor = 0, pos = at;
+    while (pos >= 0) {
+      parent.append(document.createTextNode(source.slice(cursor, pos)));
+      const mark = el("mark", "", source.slice(pos, pos + search.length));
+      parent.append(mark);
+      cursor = pos + search.length;
+      pos = folded.indexOf(search, cursor);
+    }
+    parent.append(document.createTextNode(source.slice(cursor)));
+  }
+  const getLink = ep => customLinks[ep] || DEFAULT_LINKS[ep] || "";
+  const validLink = value => {
+    try { const url = new URL(value); return url.protocol === "https:" || url.protocol === "http:"; }
+    catch { return false; }
+  };
+  async function copyTimestamp(cue) {
+    const time = formatTime(cue.t);
+    try { await navigator.clipboard.writeText(time); toast("Đã copy mốc " + time); }
+    catch { toast("Mốc thời gian: " + time); }
+  }
+  function editLink(container, ep) {
+    const previous = container.querySelector(".link-editor");
+    if (previous) { previous.remove(); return; }
+    const editor = el("div", "link-editor");
+    const title = el("label", "", "URL video tập " + ep);
+    const input = el("input"); input.type = "url"; input.placeholder = "https://...";
+    input.setAttribute("aria-label", "URL video tập " + ep);
+    input.value = getLink(ep);
+    const actions = el("div", "actions");
+    const save = el("button", "primary small", "Lưu URL");
+    save.addEventListener("click", () => {
+      const val = input.value.trim();
+      if (!validLink(val)) { toast("Vui lòng nhập URL http(s) hợp lệ"); return; }
+      customLinks[ep] = val;
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(customLinks)); } catch {}
+      toast("Đã lưu link tập " + ep + " trên trình duyệt này");
+      render();
+    });
+    const cancel = el("button", "small", "Hủy");
+    cancel.addEventListener("click", () => editor.remove());
+    actions.append(save, cancel);
+    editor.append(title, input, actions);
+    container.append(editor);
+    input.focus();
+  }
+  function makeCard(cue, search) {
+    const card = el("article", "result");
+    const heading = el("div", "result-top");
+    heading.append(el("span", "ep", "Tập " + pad(cue.ep)), el("span", "time", formatTime(cue.t)));
+    const sentence = el("div", "jp"); sentence.lang = "ja";
+    highlight(sentence, cue.text, search);
+    const actions = el("div", "actions");
+    const ep = pad(cue.ep), link = getLink(ep);
+    const open = el("button", link ? "primary small" : "small", link ? "▶ Mở video" : "↗ Mở danh sách tập");
+    open.addEventListener("click", () => {
+      const target = link || SERIES_URL;
+      window.open(target, "_blank", "noopener,noreferrer");
+      copyTimestamp(cue);
+    });
+    const time = el("button", "small", "⧉ Copy " + formatTime(cue.t));
+    time.addEventListener("click", () => copyTimestamp(cue));
+    const change = el("button", "small", link ? "Sửa link tập" : "Gắn link tập");
+    change.addEventListener("click", () => editLink(card, ep));
+    actions.append(open, time, change);
+    card.append(heading, sentence, actions);
+    if (!link) card.append(el("div", "note", "Chưa xác minh URL trực tiếp tập này. Có thể lưu link một lần để lần sau mở nhanh."));
+    return card;
+  }
+  function render() {
+    const root = $("results"), more = $("more");
+    root.replaceChildren(); more.replaceChildren();
+    if (!cues.length) return;
+    const q = normalize(query);
+    const found = cues.filter(c => (!selectedEpisode || pad(c.ep) === selectedEpisode) &&
+      (!q || normalize(c.text).includes(q)));
+    if (!q) {
+      $("stats").textContent = "Đã nạp " + cues.length + " câu từ 10 tập. Nhập từ tiếng Nhật để tìm.";
+      const empty = el("div", "empty", "Ví dụ: thử tìm おなか để biết từ này xuất hiện ở tập nào và tại thời gian nào.");
+      root.append(empty); return;
+    }
+    const episodeCount = new Set(found.map(c => c.ep)).size;
+    $("stats").textContent = found.length + " câu khớp · " + episodeCount + " tập · Từ khóa: " + query;
+    if (!found.length) {
+      root.append(el("div", "empty", "Không thấy kết quả. Hãy thử cách viết khác (kanji/kana hoặc dạng chia khác)."));
+      return;
+    }
+    for (const cue of found.slice(0, visible)) root.append(makeCard(cue, q));
+    if (found.length > visible) {
+      const btn = el("button", "", "Xem thêm (" + (found.length - visible) + " kết quả còn lại)");
+      btn.addEventListener("click", () => { visible += 40; render(); });
+      more.append(btn);
+    }
+  }
+  function updateQuery(value) {
+    query = value; visible = 40;
+    const params = new URLSearchParams(window.location.search);
+    if (query) params.set("q", query); else params.delete("q");
+    const next = window.location.pathname + (params.toString() ? "?" + params : "");
+    history.replaceState(null, "", next);
+    render();
+  }
+  $("query").addEventListener("input", ev => updateQuery(ev.target.value));
+  $("episode").addEventListener("change", ev => { selectedEpisode = ev.target.value; visible=40; render(); });
+  document.querySelectorAll("[data-q]").forEach(button => button.addEventListener("click", () => {
+    $("query").value = button.dataset.q; updateQuery(button.dataset.q); $("query").focus();
+  }));
+  fetch("./subtitles-index.json", { cache: "no-cache" })
+    .then(res => { if (!res.ok) throw Error("HTTP " + res.status); return res.json(); })
+    .then(data => {
+      if (!Array.isArray(data.cues)) throw Error("Invalid subtitle index");
+      cues = data.cues;
+      for (let i=1; i<=data.episodes; i++) {
+        const option = el("option", "", "Tập " + pad(i));
+        option.value = pad(i); $("episode").append(option);
+      }
+      const initial = new URLSearchParams(location.search).get("q") || "";
+      $("query").value = initial; query = initial; render();
+    })
+    .catch(err => {
+      $("stats").textContent = "Không tải được phụ đề: " + err.message;
+      $("results").replaceChildren(el("div", "empty", "Hãy mở trang qua GitHub Pages (không mở trực tiếp index.html bằng file://) và kiểm tra subtitles-index.json."));
+    });
+})();
+</script>
+</body>
+</html>
