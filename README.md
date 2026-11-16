@@ -15,3 +15,19 @@ Nơi lưu phụ đề tiếng Nhật để học anime bằng [asbplayer](https:
 ## Cách dùng
 
 Mở video tương ứng, vào asbplayer → Load Subtitles → chọn file `.ja.srt`. Nếu phụ đề xuất hiện lệch lời thoại, chỉnh subtitle offset.
+
+
+## Tra cứu từ vựng trên web
+
+Trang tra cứu nằm trong `docs/index.html` và sử dụng `docs/subtitles-index.json`.
+Hiện đã lập chỉ mục **407 câu từ tập 001–010**.
+
+**Bật GitHub Pages lần đầu:** Repository → **Settings → Pages** → **Build and deployment** → Source **Deploy from a branch** → Branch **main**, folder **/docs** → **Save**.
+
+Sau khi GitHub Pages xuất bản xong, mở:
+
+**https://dankhoi24.github.io/japanese-anime-subtitle-toolkit/**
+
+Tính năng: tìm từ/cụm từ Nhật theo nội dung phụ đề, lọc theo tập, xem câu và timestamp, copy thời gian, mở video. URL trực tiếp được xác minh mới có tập 001; khi tìm tập khác, có thể tự **Gắn link tập** một lần trên trình duyệt hoặc mở trang danh sách tập. Liên kết riêng được lưu bằng localStorage của trình duyệt đó.
+
+**Giới hạn:** Mở video không tự tua chính xác đến timestamp vì chưa xác nhận AnimeVietSub hỗ trợ deep link theo thời gian. Nút mở video sẽ đồng thời sao chép mốc phút:giây, để bạn tua hoặc dùng asbplayer. Video và audio không được lưu trữ trên GitHub Pages.
